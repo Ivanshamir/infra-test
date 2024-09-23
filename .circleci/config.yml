@@ -1,45 +1,30 @@
 version: 2.1
 
 jobs:
-  build-and-test:
-    docker:
-      - image: cimg/node:14.0
-    steps:
-      - checkout
-      - run:
-          name: Install dependencies
-          command: npm install
-      - run:
-          name: Run tests
-          command: npm test
-      - run:
-          name: Build application
-          command: npm run build
-
-  docker-build-and-push:
+  build-and-push:
     docker:
       - image: cimg/base:stable
     steps:
       - checkout
       - setup_remote_docker:
-          version: 20.10.14
+          version: default
       - run:
           name: Build Docker image
           command: |
-            echo "SOME_ENV_VAR=${SOME_ENV_VAR}" > .env
-            docker build -t yourdockerhubusername/express-ts-docker:$CIRCLE_SHA1 .
+            echo "PORT=${PORT}" > .env
+            echo "APP_ENV=${APP_ENV}" > .env
+            docker build -t $DOCKER_USERNAME/$CIRCLE_PROJECT_REPONAME:latest -f .docker/Dockerfile .
+      - run:
+          name: Login to Docker Hub
+          command: echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
       - run:
           name: Push Docker image to Docker Hub
           command: |
-            echo $DOCKERHUB_PASS | docker login -u $DOCKERHUB_USERNAME --password-stdin
-            docker push yourdockerhubusername/express-ts-docker:$CIRCLE_SHA1
+            docker push $DOCKER_USERNAME/$CIRCLE_PROJECT_REPONAME:latest
 
 workflows:
   version: 2
-  build-test-deploy:
+  build-and-deploy:
     jobs:
-      - build-and-test
-      - docker-build-and-push:
-          requires:
-            - build-and-test
-          context: docker-hub-creds
+      - build-and-push:
+          context: docker-hub-creds 
