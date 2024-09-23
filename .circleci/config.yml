@@ -11,10 +11,8 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            cat << 'EOF' > .env
-            PORT=${PORT}
-            APP_ENV=${APP_ENV}
-            EOF
+            echo "PORT=${PORT}" >> .env
+            echo "APP_ENV=${APP_ENV}" >> .env
             docker build -t $DOCKER_USERNAME/$CIRCLE_PROJECT_REPONAME:latest -f .docker/Dockerfile .
       - run:
           name: Login to Docker Hub
