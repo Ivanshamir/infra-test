@@ -24,7 +24,7 @@ WORKDIR /usr/src/api
 RUN rm -rf node_modules
 
 RUN pnpm install && \
-    pnpm build && 
+    pnpm build
 
 EXPOSE 6000
 
