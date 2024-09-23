@@ -11,7 +11,7 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            cat << EOF > .env
+            cat << 'EOF' > .env
             PORT=${PORT}
             APP_ENV=${APP_ENV}
             EOF
