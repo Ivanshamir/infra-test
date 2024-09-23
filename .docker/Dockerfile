@@ -26,6 +26,6 @@ RUN rm -rf node_modules
 RUN pnpm install && \
     pnpm build
 
-EXPOSE 6000
+EXPOSE 5000
 
 ENTRYPOINT ["pnpm", "start"]
